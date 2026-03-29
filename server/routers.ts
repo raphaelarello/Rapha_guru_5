@@ -6,6 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { footballRouter } from "./routers/football";
 import { picksRouter } from "./routers/picks";
+import { pitacosExpandedRouterV2 } from "./routers/pitacos-expanded-v2";
 import {
   getBotsByUserId, getBotById, createBot, updateBot, deleteBot,
   getCanaisByUserId, upsertCanal, updateCanal,
@@ -396,56 +397,8 @@ export const appRouter = router({
       }),
   }),
 
-  // Pitacos (Manual analyses)
-  pitacos: router({
-    list: protectedProcedure.query(async ({ ctx }) => {
-      try {
-        return await getPitacosByUserId(ctx.user.id);
-      } catch (error) {
-        console.error("[pitacos.list]", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-      }
-    }),
-
-    create: protectedProcedure
-      .input(z.object({
-        jogo: z.string().min(1),
-        mercado: z.string().min(1),
-        odd: z.number().min(1),
-        analise: z.string().min(1),
-        confianca: z.number().min(0).max(100),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        try {
-          return await createPitaco({
-            userId: ctx.user.id,
-            jogo: input.jogo,
-            mercado: input.mercado,
-            odd: input.odd.toString(),
-            analise: input.analise,
-            confianca: input.confianca,
-            resultado: "pendente",
-          });
-        } catch (error) {
-          console.error("[pitacos.create]", error);
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-        }
-      }),
-
-    update: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        resultado: z.enum(["pendente", "green", "red", "void"]).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        try {
-          return await updatePitaco(input.id, ctx.user.id, input);
-        } catch (error) {
-          console.error("[pitacos.update]", error);
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-        }
-      }),
-  }),
+  // Pitacos (Manual analyses + Engine - Marcos 1-4)
+  pitacos: pitacosExpandedRouterV2,
 
   // live.dashboardAoVivo REMOVIDO - frontend agora usa football.dashboardAoVivo diretamente
 });

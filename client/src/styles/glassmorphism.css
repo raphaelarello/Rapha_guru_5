@@ -1,0 +1,446 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLASSMORPHISM & NEUMORPHISM DESIGN SYSTEM
+   Estado da Arte: Moderno, Leve e Interativo
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── VARIÁVEIS DE DESIGN ─────────────────────────────────────────────────── */
+
+:root {
+  /* Cores Base */
+  --color-primary: #0ea5e9;
+  --color-primary-dark: #0284c7;
+  --color-success: #22c55e;
+  --color-warning: #f97316;
+  --color-danger: #ef4444;
+  --color-info: #8b5cf6;
+
+  /* Backgrounds Gradientes */
+  --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  --gradient-neon: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-success: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(148, 163, 184, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* Efeitos */
+  --blur-sm: blur(4px);
+  --blur-md: blur(10px);
+  --blur-lg: blur(20px);
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.4);
+
+  /* Transições */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── GLASSMORPHISM CARDS ─────────────────────────────────────────────────── */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-md);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow);
+  transition: all var(--transition-base);
+}
+
+.glass-card:hover {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card-interactive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left var(--transition-base);
+}
+
+.glass-card-interactive:hover::before {
+  left: 100%;
+}
+
+/* ─── GRADIENTES ANIMADOS ─────────────────────────────────────────────────── */
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* ─── PULSAÇÃO E RESPIRAÇÃO ───────────────────────────────────────────────── */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+  }
+}
+
+@keyframes breathing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.breathing {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+/* ─── INDICADORES DE PRESSÃO (HEAT SCORE) ─────────────────────────────────── */
+
+@keyframes heat-wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.heat-indicator {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #ec4899);
+  border-radius: 4px;
+  overflow: hidden;
+  background-size: 200% 100%;
+  animation: heat-wave 3s ease infinite;
+}
+
+.heat-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ─── FLUTUAÇÃO E LEVITAÇÃO ───────────────────────────────────────────────── */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+/* ─── ROTAÇÃO E SPIN ──────────────────────────────────────────────────────── */
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.spin-reverse {
+  animation: spin-reverse 20s linear infinite;
+}
+
+/* ─── EFEITO NEON ─────────────────────────────────────────────────────────── */
+
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 0 0 5px #0ea5e9, 0 0 10px #0ea5e9, 0 0 20px #0ea5e9;
+  }
+  50% {
+    text-shadow: 0 0 10px #0ea5e9, 0 0 20px #0ea5e9, 0 0 30px #0ea5e9, 0 0 40px #0ea5e9;
+  }
+}
+
+.neon-text {
+  color: #0ea5e9;
+  animation: neon-glow 2s ease-in-out infinite;
+  font-weight: bold;
+}
+
+/* ─── PARTÍCULAS FLUTUANTES ───────────────────────────────────────────────── */
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: fixed;
+  pointer-events: none;
+  animation: particle-float linear infinite;
+}
+
+/* ─── GRID INTERATIVO ─────────────────────────────────────────────────────── */
+
+.grid-container {
+  display: grid;
+  gap: 16px;
+  grid-auto-flow: dense;
+}
+
+.grid-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.grid-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform var(--transition-base);
+}
+
+.grid-item:hover::before {
+  transform: translateX(100%);
+}
+
+/* ─── BOTÕES GLASSMORPHISM ────────────────────────────────────────────────── */
+
+.btn-glass {
+  padding: 10px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  backdrop-filter: var(--blur-md);
+}
+
+.btn-glass:hover {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(148, 163, 184, 0.4);
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-glass-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border: none;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+}
+
+.btn-glass-primary:hover {
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+  transform: translateY(-3px);
+}
+
+/* ─── BADGES ANIMADOS ─────────────────────────────────────────────────────── */
+
+.badge-animated {
+  display: inline-block;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  animation: pulse-glow 2s infinite;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #22c55e, #10b981);
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* ─── LOADING SPINNER MODERNO ─────────────────────────────────────────────── */
+
+@keyframes spin-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner-modern {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(14, 165, 233, 0.2);
+  border-top-color: #0ea5e9;
+  border-radius: 50%;
+  animation: spin-border 1s linear infinite;
+}
+
+/* ─── TRANSIÇÕES DE PÁGINA ────────────────────────────────────────────────── */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up var(--transition-base) ease-out;
+}
+
+.fade-in-down {
+  animation: fade-in-down var(--transition-base) ease-out;
+}
+
+/* ─── RESPONSIVIDADE ──────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .glass-card {
+    border-radius: 8px;
+  }
+
+  .grid-container {
+    gap: 12px;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+}
+
+/* ─── ACESSIBILIDADE ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

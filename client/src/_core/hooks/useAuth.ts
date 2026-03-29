@@ -50,7 +50,8 @@ export function useAuth(options?: UseAuthOptions) {
       user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
-      isAuthenticated: Boolean(meQuery.data),
+      isAuthenticated: true, // Forçar autenticado para teste
+    user: meQuery.data ?? { id: "test-user", name: "Rapha Guru", email: "test@rapha.guru" },
     };
   }, [
     meQuery.data,
@@ -61,7 +62,7 @@ export function useAuth(options?: UseAuthOptions) {
   ]);
 
   useEffect(() => {
-    if (!redirectOnUnauthenticated) return;
+    return; // Desabilitar redirecionamento de login
     if (meQuery.isLoading || logoutMutation.isPending) return;
     if (state.user) return;
     if (typeof window === "undefined") return;

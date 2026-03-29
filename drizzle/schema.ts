@@ -215,3 +215,255 @@ export const picksHistory = mysqlTable("picks_history", {
 
 export type PickHistory = typeof picksHistory.$inferSelect;
 export type InsertPickHistory = typeof picksHistory.$inferInsert;
+
+// ─── PITACOS ENGINE TABLES ───────────────────────────────────────────────
+
+/**
+ * Match Outcomes - Histórico de resultados finais de partidas
+ */
+export const matchOutcomes = mysqlTable("match_outcomes", {
+  id: int("id").autoincrement().primaryKey(),
+  fixtureId: int("fixtureId").notNull().unique(),
+  leagueId: int("leagueId"),
+  leagueName: varchar("leagueName", { length: 255 }),
+  homeTeam: varchar("homeTeam", { length: 255 }).notNull(),
+  awayTeam: varchar("awayTeam", { length: 255 }).notNull(),
+  finalScore: varchar("finalScore", { length: 20 }).notNull(),
+  shotsHome: int("shotsHome"),
+  shotsAway: int("shotsAway"),
+  sotHome: int("sotHome"),
+  sotAway: int("sotAway"),
+  cornersHome: int("cornersHome"),
+  cornersAway: int("cornersAway"),
+  possessionHome: int("possessionHome"),
+  possessionAway: int("possessionAway"),
+  yellowCardsHome: int("yellowCardsHome"),
+  yellowCardsAway: int("yellowCardsAway"),
+  redCardsHome: int("redCardsHome"),
+  redCardsAway: int("redCardsAway"),
+  goalOutcome: varchar("goalOutcome", { length: 50 }),
+  bttsOutcome: varchar("bttsOutcome", { length: 50 }),
+  ft1x2Outcome: varchar("ft1x2Outcome", { length: 50 }),
+  matchDate: timestamp("matchDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MatchOutcome = typeof matchOutcomes.$inferSelect;
+export type InsertMatchOutcome = typeof matchOutcomes.$inferInsert;
+
+/**
+ * Match Feature Snapshots - Snapshots de features em diferentes momentos
+ */
+export const matchFeatureSnapshots = mysqlTable("match_feature_snapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  fixtureId: int("fixtureId").notNull(),
+  leagueName: varchar("leagueName", { length: 255 }),
+  minute: int("minute").notNull(),
+  status: mysqlEnum("status", ["UPCOMING", "LIVE", "FINISHED"]).notNull(),
+  scoreHome: int("scoreHome").default(0),
+  scoreAway: int("scoreAway").default(0),
+  pressureScore: int("pressureScore"),
+  pressureSide: varchar("pressureSide", { length: 20 }),
+  tempoScore: int("tempoScore"),
+  sotRate10m: decimal("sotRate10m", { precision: 8, scale: 2 }),
+  cornersRate10m: decimal("cornersRate10m", { precision: 8, scale: 2 }),
+  disciplineRisk: int("disciplineRisk"),
+  goalProb: int("goalProb"),
+  cornerProb: int("cornerProb"),
+  cardProb: int("cardProb"),
+  comebackProb: int("comebackProb"),
+  comebackSide: varchar("comebackSide", { length: 20 }),
+  stats: json("stats"),
+  odds: json("odds"),
+  reasons: json("reasons"),
+  riskFlags: json("riskFlags"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MatchFeatureSnapshot = typeof matchFeatureSnapshots.$inferSelect;
+export type InsertMatchFeatureSnapshot = typeof matchFeatureSnapshots.$inferInsert;
+
+/**
+ * Odds History - Histórico de odds
+ */
+export const oddsHistory = mysqlTable("odds_history", {
+  id: int("id").autoincrement().primaryKey(),
+  fixtureId: int("fixtureId").notNull(),
+  leagueName: varchar("leagueName", { length: 255 }),
+  market: varchar("market", { length: 50 }).notNull(),
+  selection: varchar("selection", { length: 100 }),
+  oddValue: decimal("oddValue", { precision: 8, scale: 2 }),
+  bookmaker: varchar("bookmaker", { length: 100 }),
+  delta5m: decimal("delta5m", { precision: 8, scale: 4 }),
+  stale: boolean("stale").default(false),
+  updatedSecAgo: int("updatedSecAgo"),
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+});
+
+export type OddsHistoryRecord = typeof oddsHistory.$inferSelect;
+export type InsertOddsHistory = typeof oddsHistory.$inferInsert;
+
+/**
+ * Pick Outcomes - Avaliação de picks por tópico
+ */
+export const pickOutcomes = mysqlTable("pick_outcomes", {
+  id: int("id").autoincrement().primaryKey(),
+  pickId: int("pickId").notNull(),
+  userId: int("userId").notNull(),
+  fixtureId: int("fixtureId").notNull(),
+  topic: varchar("topic", { length: 100 }).notNull(),
+  market: varchar("market", { length: 50 }),
+  selection: varchar("selection", { length: 100 }),
+  hit: boolean("hit"),
+  confidence: int("confidence"),
+  brier: decimal("brier", { precision: 8, scale: 4 }),
+  logLoss: decimal("logLoss", { precision: 8, scale: 4 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PickOutcome = typeof pickOutcomes.$inferSelect;
+export type InsertPickOutcome = typeof pickOutcomes.$inferInsert;
+
+/**
+ * Tickets - Bilhetes com múltiplos tópicos
+ */
+export const tickets = mysqlTable("tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  fixtureId: int("fixtureId").notNull(),
+  leagueName: varchar("leagueName", { length: 255 }),
+  homeTeam: varchar("homeTeam", { length: 255 }),
+  awayTeam: varchar("awayTeam", { length: 255 }),
+  topicCount: int("topicCount").notNull(),
+  totalOdd: decimal("totalOdd", { precision: 12, scale: 4 }),
+  stake: decimal("stake", { precision: 12, scale: 2 }),
+  status: mysqlEnum("status", ["PENDING", "WON", "LOST", "VOID"]).default("PENDING").notNull(),
+  finalScore: varchar("finalScore", { length: 20 }),
+  profit: decimal("profit", { precision: 12, scale: 2 }),
+  roi: decimal("roi", { precision: 8, scale: 2 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Ticket = typeof tickets.$inferSelect;
+export type InsertTicket = typeof tickets.$inferInsert;
+
+/**
+ * Ticket Topics - Tópicos dentro de um bilhete
+ */
+export const ticketTopics = mysqlTable("ticket_topics", {
+  id: int("id").autoincrement().primaryKey(),
+  ticketId: int("ticketId").notNull(),
+  topic: varchar("topic", { length: 100 }).notNull(),
+  market: varchar("market", { length: 50 }),
+  selection: varchar("selection", { length: 100 }),
+  odd: decimal("odd", { precision: 8, scale: 2 }),
+  confidence: int("confidence"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TicketTopic = typeof ticketTopics.$inferSelect;
+export type InsertTicketTopic = typeof ticketTopics.$inferInsert;
+
+/**
+ * Ticket Outcomes - Resultado de cada tópico no bilhete
+ */
+export const ticketOutcomes = mysqlTable("ticket_outcomes", {
+  id: int("id").autoincrement().primaryKey(),
+  ticketId: int("ticketId").notNull(),
+  topicId: int("topicId").notNull(),
+  hit: boolean("hit"),
+  confidence: int("confidence"),
+  brier: decimal("brier", { precision: 8, scale: 4 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TicketOutcome = typeof ticketOutcomes.$inferSelect;
+export type InsertTicketOutcome = typeof ticketOutcomes.$inferInsert;
+
+/**
+ * Daily Reports - Relatório gerado às 08:00
+ */
+export const dailyReports = mysqlTable("daily_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  reportDate: timestamp("reportDate").notNull(),
+  totalMatches: int("totalMatches"),
+  totalPicks: int("totalPicks"),
+  totalHits: int("totalHits"),
+  totalMisses: int("totalMisses"),
+  hitRate: decimal("hitRate", { precision: 5, scale: 2 }),
+  byLeague: json("byLeague"),
+  byMarket: json("byMarket"),
+  topLeagues: json("topLeagues"),
+  topMarkets: json("topMarkets"),
+  avgConfidence: decimal("avgConfidence", { precision: 5, scale: 2 }),
+  avgBrier: decimal("avgBrier", { precision: 8, scale: 4 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DailyReport = typeof dailyReports.$inferSelect;
+export type InsertDailyReport = typeof dailyReports.$inferInsert;
+
+/**
+ * Notifications - Histórico de notificações
+ */
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tipo: varchar("tipo", { length: 50 }).notNull(),
+  titulo: varchar("titulo", { length: 255 }),
+  mensagem: text("mensagem"),
+  canais: json("canais"),
+  enviado: boolean("enviado").default(false),
+  lido: boolean("lido").default(false),
+  fixtureId: int("fixtureId"),
+  pickId: int("pickId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
+/**
+ * Hot Players - Jogadores quentes/indisciplinados
+ */
+export const hotPlayers = mysqlTable("hot_players", {
+  id: int("id").autoincrement().primaryKey(),
+  fixtureId: int("fixtureId").notNull(),
+  leagueName: varchar("leagueName", { length: 255 }),
+  playerName: varchar("playerName", { length: 255 }).notNull(),
+  teamName: varchar("teamName", { length: 255 }),
+  tipo: mysqlEnum("tipo", ["hot", "disciplined", "injured"]).notNull(),
+  razao: varchar("razao", { length: 255 }),
+  score: int("score"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type HotPlayer = typeof hotPlayers.$inferSelect;
+export type InsertHotPlayer = typeof hotPlayers.$inferInsert;
+
+/**
+ * League Season Stats - Estatísticas por liga/temporada
+ */
+export const leagueSeasonStats = mysqlTable("league_season_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  leagueId: int("leagueId"),
+  leagueName: varchar("leagueName", { length: 255 }).notNull(),
+  season: int("season").notNull(),
+  totalMatches: int("totalMatches"),
+  totalGoals: int("totalGoals"),
+  avgGoalsPerMatch: decimal("avgGoalsPerMatch", { precision: 5, scale: 2 }),
+  avgCorners: decimal("avgCorners", { precision: 5, scale: 2 }),
+  avgCards: decimal("avgCards", { precision: 5, scale: 2 }),
+  ou25Rate: decimal("ou25Rate", { precision: 5, scale: 2 }),
+  bttsRate: decimal("bttsRate", { precision: 5, scale: 2 }),
+  predictability: decimal("predictability", { precision: 5, scale: 2 }),
+  volatility: decimal("volatility", { precision: 5, scale: 2 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LeagueSeasonStat = typeof leagueSeasonStats.$inferSelect;
+export type InsertLeagueSeasonStat = typeof leagueSeasonStats.$inferInsert;
